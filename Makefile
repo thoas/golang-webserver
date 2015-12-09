@@ -4,7 +4,7 @@ BIN_DIR = $(ROOT_DIR)/bin
 build-static:
 	@(echo "-> Creating statically linked binary...")
 	mkdir -p $(BIN_DIR)
-	@(go build -a -installsuffix cgo -o $(BIN_DIR)/webserver)
+	@(CGO_ENABLED=0 go build -a -installsuffix cgo -o $(BIN_DIR)/webserver)
 
 docker-build:
 	@(echo "-> Preparing builder...")
