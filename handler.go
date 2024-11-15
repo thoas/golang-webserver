@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"runtime/debug"
 )
 
 type handler struct {
@@ -19,6 +20,7 @@ func (h *handler) wrap(wrapped http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if r := recover(); r != nil {
+				debug.PrintStack()
 				h.logError(r)
 				w.WriteHeader(http.StatusInternalServerError)
 			}
