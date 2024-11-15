@@ -11,8 +11,10 @@ import (
 const DEFAULT_PORT = 8080
 
 func main() {
-	var port int = DEFAULT_PORT
-	var err error
+	var (
+		port int = DEFAULT_PORT
+		err  error
+	)
 
 	sport := os.Getenv("PORT")
 
