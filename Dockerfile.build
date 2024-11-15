@@ -1,4 +1,4 @@
-FROM golang:1.5.2
+FROM golang:1.23
 
 ADD . /go/src/github.com/thoas/webserver
 
@@ -7,4 +7,3 @@ WORKDIR /go/src/github.com/thoas/webserver
 VOLUME ["/go/src/github.com/thoas/webserver/bin"]
 
 CMD make build-static
-

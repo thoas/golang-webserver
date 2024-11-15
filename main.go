@@ -2,16 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
 )
 
 const DEFAULT_PORT = 8080
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there %s!", r.URL.Path[1:])
-}
 
 func main() {
 	var port int = DEFAULT_PORT
@@ -27,8 +24,11 @@ func main() {
 		}
 	}
 
-	fmt.Printf("Running on :%d", port)
+	log.Printf("Running on :%d", port)
 
-	http.HandleFunc("/", handler)
+	h := handler{store: newStore()}
+	http.HandleFunc("/", h.root)
+	http.HandleFunc("/dump", h.dump)
+	http.HandleFunc("/flush", h.flush)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
