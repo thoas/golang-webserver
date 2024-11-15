@@ -27,8 +27,8 @@ func main() {
 	log.Printf("Running on :%d", port)
 
 	h := handler{store: newStore()}
-	http.HandleFunc("/", h.root)
-	http.HandleFunc("/dump", h.dump)
-	http.HandleFunc("/flush", h.flush)
+	http.HandleFunc("/", h.wrap(h.root))
+	http.HandleFunc("/dump", h.wrap(h.dump))
+	http.HandleFunc("/flush", h.wrap(h.flush))
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
