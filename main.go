@@ -22,7 +22,7 @@ func main() {
 		port, err = strconv.Atoi(sport)
 
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 	}
 
@@ -32,5 +32,7 @@ func main() {
 	http.HandleFunc("/", h.wrap(h.root))
 	http.HandleFunc("/dump", h.wrap(h.dump))
 	http.HandleFunc("/flush", h.wrap(h.flush))
-	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
+		log.Fatal(err)
+	}
 }
