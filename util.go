@@ -19,24 +19,24 @@ func getBody(r *http.Request) (interface{}, []byte, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	if save != nil {
-		if r.Header.Get("Content-Type") == "application/json" {
-			out, err := dumpJson(save)
-			if err != nil {
-				return nil, nil, err
-			}
+	if save == nil {
+		return nil, nil, nil
+	}
 
-			return out, nil, nil
-		}
-
-		body, err := io.ReadAll(save)
+	if r.Header.Get("Content-Type") == "application/json" {
+		out, err := dumpJson(save)
 		if err != nil {
 			return nil, nil, err
 		}
-		return nil, body, nil
+
+		return out, nil, nil
 	}
 
-	return nil, nil, nil
+	body, err := io.ReadAll(save)
+	if err != nil {
+		return nil, nil, err
+	}
+	return nil, body, nil
 }
 
 func remoteIP(req *http.Request) string {
@@ -63,12 +63,12 @@ func remoteIP(req *http.Request) string {
 }
 
 func getClientIPByHeaders(req *http.Request) string {
-	ipSlice := make([]string, 0)
-	ipSlice = append(ipSlice, req.Header.Get("X-Forwarded-For"))
-	ipSlice = append(ipSlice, req.Header.Get("x-forwarded-for"))
-	ipSlice = append(ipSlice, req.Header.Get("X-FORWARDED-FOR"))
-
-	for _, v := range ipSlice {
+	ips := []string{
+		req.Header.Get("X-Forwarded-For"),
+		req.Header.Get("x-forwarded-for"),
+		req.Header.Get("X-FORWARDED-FOR"),
+	}
+	for _, v := range ips {
 		if v != "" {
 			return v
 		}
