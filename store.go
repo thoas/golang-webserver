@@ -7,27 +7,27 @@ import (
 	"time"
 )
 
-type store struct {
+type Store struct {
 	mu       sync.Mutex
-	requests []*request
+	requests []*Request
 	capacity int
 	index    int
 }
 
-func newStore(capacity int) *store {
-	return &store{
+func NewStore(capacity int) *Store {
+	return &Store{
 		mu:       sync.Mutex{},
-		requests: make([]*request, capacity, capacity),
+		requests: make([]*Request, capacity, capacity),
 		capacity: capacity,
 		index:    0,
 	}
 }
 
-func (s *store) add(r *http.Request) error {
+func (s *Store) Add(r *http.Request) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	req := &request{
+	req := &Request{
 		Method:    r.Method,
 		URI:       r.RequestURI,
 		Headers:   make(map[string]string),
@@ -60,16 +60,16 @@ func (s *store) add(r *http.Request) error {
 	return nil
 }
 
-func (s *store) flush() {
+func (s *Store) Flush() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	s.requests = make([]*request, 0, s.capacity)
+	s.requests = make([]*Request, 0, s.capacity)
 }
 
-func (s *store) dump() []*request {
+func (s *Store) Dump() []*Request {
 	s.mu.Lock()
-	requests := make([]*request, 0)
+	requests := make([]*Request, 0)
 	for i := range s.requests {
 		if s.requests[i] == nil {
 			continue

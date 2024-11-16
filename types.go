@@ -2,7 +2,7 @@ package main
 
 import "time"
 
-type request struct {
+type Request struct {
 	URI       string            `json:"uri"`
 	ClientIP  string            `json:"client_ip,omitempty"`
 	Method    string            `json:"method"`
@@ -12,6 +12,6 @@ type request struct {
 	CreatedAt time.Time         `json:"created_at"`
 }
 
-type response struct {
-	Requests []*request `json:"requests"`
+type Response struct {
+	Requests []*Request `json:"requests"`
 }

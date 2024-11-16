@@ -10,15 +10,19 @@ import (
 
 type HandlerFunc func(http.ResponseWriter, *http.Request) error
 
-type handler struct {
-	store *store
+func NewHandler(store *Store) *Handler {
+	return &Handler{store: store}
 }
 
-func (h *handler) logError(err interface{}) {
+type Handler struct {
+	store *Store
+}
+
+func (h *Handler) logError(err interface{}) {
 	log.Print(err)
 }
 
-func (h *handler) wrap(wrapped HandlerFunc) http.HandlerFunc {
+func (h *Handler) Wrap(wrapped HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if r := recover(); r != nil {
@@ -33,8 +37,8 @@ func (h *handler) wrap(wrapped HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func (h *handler) root(w http.ResponseWriter, r *http.Request) error {
-	if err := h.store.add(r); err != nil {
+func (h *Handler) Root(w http.ResponseWriter, r *http.Request) error {
+	if err := h.store.Add(r); err != nil {
 		return err
 	}
 
@@ -43,16 +47,16 @@ func (h *handler) root(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func (h *handler) flush(w http.ResponseWriter, _ *http.Request) error {
-	h.store.flush()
+func (h *Handler) Flush(w http.ResponseWriter, _ *http.Request) error {
+	h.store.Flush()
 	w.WriteHeader(http.StatusOK)
 
 	return nil
 }
 
-func (h *handler) dump(w http.ResponseWriter, r *http.Request) error {
-	requests := h.store.dump()
-	res := &response{Requests: requests}
+func (h *Handler) Dump(w http.ResponseWriter, r *http.Request) error {
+	requests := h.store.Dump()
+	res := &Response{Requests: requests}
 	out, err := json.Marshal(res)
 	if err != nil {
 		return err

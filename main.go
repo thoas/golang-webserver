@@ -40,10 +40,10 @@ func main() {
 
 	log.Printf("Running on :%d", port)
 
-	h := handler{store: newStore(capacity)}
-	http.HandleFunc("/", h.wrap(h.root))
-	http.HandleFunc("/dump", h.wrap(h.dump))
-	http.HandleFunc("/flush", h.wrap(h.flush))
+	h := NewHandler(NewStore(capacity))
+	http.HandleFunc("/", h.Wrap(h.Root))
+	http.HandleFunc("/dump", h.Wrap(h.Dump))
+	http.HandleFunc("/flush", h.Wrap(h.Flush))
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
 		log.Fatal(err)
 	}
