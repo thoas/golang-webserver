@@ -10,6 +10,35 @@ import (
 	"strings"
 )
 
+func getBody(r *http.Request) (interface{}, []byte, error) {
+	var (
+		err  error
+		save io.ReadCloser
+	)
+	save, r.Body, err = drainBody(r.Body)
+	if err != nil {
+		return nil, nil, err
+	}
+	if save != nil {
+		if r.Header.Get("Content-Type") == "application/json" {
+			out, err := dumpJson(save)
+			if err != nil {
+				return nil, nil, err
+			}
+
+			return out, nil, nil
+		}
+
+		body, err := io.ReadAll(save)
+		if err != nil {
+			return nil, nil, err
+		}
+		return nil, body, nil
+	}
+
+	return nil, nil, nil
+}
+
 func remoteIP(req *http.Request) string {
 	url, err := url.Parse(req.Header.Get("Origin"))
 	if err == nil {

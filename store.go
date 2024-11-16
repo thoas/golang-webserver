@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"net/http"
 	"sort"
 	"sync"
@@ -40,28 +39,16 @@ func (s *store) add(r *http.Request) error {
 		req.Headers[key] = vals[0]
 	}
 
-	var (
-		err  error
-		save io.ReadCloser
-	)
-	save, r.Body, err = drainBody(r.Body)
+	out, body, err := getBody(r)
 	if err != nil {
 		return err
 	}
-	if save != nil {
-		if r.Header.Get("Content-Type") == "application/json" {
-			out, err := dumpJson(save)
-			if err != nil {
-				return err
-			}
-			req.Json = out
-		} else {
-			body, err := io.ReadAll(save)
-			if err != nil {
-				return err
-			}
-			req.Body = string(body)
-		}
+
+	if body != nil {
+		req.Body = string(body)
+	}
+	if out != nil {
+		req.Json = out
 	}
 
 	s.requests[s.index] = req

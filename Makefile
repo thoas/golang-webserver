@@ -18,3 +18,6 @@ docker-run:
 
 lint:
 	golangci-lint run .
+
+live:
+	air --build.cmd "make build-static" --build.bin "./bin/webserver"
