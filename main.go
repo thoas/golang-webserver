@@ -8,18 +8,19 @@ import (
 	"strconv"
 )
 
-const DEFAULT_PORT = 8080
-const DEFAULT_CAPACITY = 100
+const (
+	DEFAULT_PORT     = 8080
+	DEFAULT_CAPACITY = 100
+)
 
 func main() {
 	var (
-		port     int = DEFAULT_PORT
-		capacity int = DEFAULT_CAPACITY
-		err      error
+		port      int = DEFAULT_PORT
+		capacity  int = DEFAULT_CAPACITY
+		err       error
+		sport     = os.Getenv("PORT")
+		scapacity = os.Getenv("CAPACITY")
 	)
-
-	sport := os.Getenv("PORT")
-	scapacity := os.Getenv("CAPACITY")
 
 	if sport != "" {
 		port, err = strconv.Atoi(sport)
