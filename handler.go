@@ -42,14 +42,14 @@ func (h *Handler) Root(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "Ok")
 
 	return nil
 }
 
 func (h *Handler) Flush(w http.ResponseWriter, _ *http.Request) error {
 	h.store.Flush()
-	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "Ok")
 
 	return nil
 }

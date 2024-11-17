@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -40,7 +41,7 @@ func main() {
 
 	log.Printf("Running on :%d", port)
 
-	h := NewHandler(NewStore(capacity))
+	h := NewHandler(NewStore(capacity, strings.Split(os.Getenv("EXCLUDED_HEADERS"), ",")))
 	http.HandleFunc("/", h.Wrap(h.Root))
 	http.HandleFunc("/dump", h.Wrap(h.Dump))
 	http.HandleFunc("/flush", h.Wrap(h.Flush))

@@ -2,24 +2,27 @@ package main
 
 import (
 	"net/http"
+	"slices"
 	"sort"
 	"sync"
 	"time"
 )
 
 type Store struct {
-	mu       sync.Mutex
-	requests []*Request
-	capacity int
-	index    int
+	mu              sync.Mutex
+	requests        []*Request
+	capacity        int
+	index           int
+	excludedHeaders []string
 }
 
-func NewStore(capacity int) *Store {
+func NewStore(capacity int, excludedHeaders []string) *Store {
 	return &Store{
-		mu:       sync.Mutex{},
-		requests: make([]*Request, capacity, capacity),
-		capacity: capacity,
-		index:    0,
+		mu:              sync.Mutex{},
+		requests:        make([]*Request, capacity, capacity),
+		capacity:        capacity,
+		index:           0,
+		excludedHeaders: excludedHeaders,
 	}
 }
 
@@ -36,6 +39,9 @@ func (s *Store) Add(r *http.Request) error {
 	}
 
 	for key, vals := range r.Header {
+		if slices.Contains(s.excludedHeaders, key) {
+			continue
+		}
 		req.Headers[key] = vals[0]
 	}
 
