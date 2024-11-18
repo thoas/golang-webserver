@@ -70,7 +70,7 @@ func (s *Store) Flush() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	s.requests = make([]*Request, 0, s.capacity)
+	s.requests = make([]*Request, s.capacity, s.capacity)
 }
 
 func (s *Store) Dump() []*Request {
